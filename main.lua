@@ -38,7 +38,7 @@ local config=conf.import("place_limit",{
     }
 })
 
-table_ext.add_all(_G, config)
+table_ext.add_all(getfenv(1), config)
 
 get_cooldown_by_name=function(nodename)
     return cooldown.by_name[nodename]
