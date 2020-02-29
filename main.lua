@@ -6,14 +6,14 @@
 
 event_handlers={}
 
-player_ext.add_playerdata_function(function(playerdata)
+modlib.player.add_playerdata_function(function(playerdata)
     playerdata.last_placed=minetest.get_us_time()
 end)
-player_ext.set_property_default("required_cooldown", 0)
+modlib.player.set_property_default("required_cooldown", 0)
 
-log.create_channel("place_limit") -- Create log channel
+modlib.log.create_channel("place_limit")
 
-local config=conf.import("place_limit",{
+local config=modlib.conf.import("place_limit",{
     type="table",
     children={
         cooldown={
@@ -38,7 +38,7 @@ local config=conf.import("place_limit",{
     }
 })
 
-table_ext.add_all(getfenv(1), config)
+modlib.table.add_all(getfenv(1), config)
 
 get_cooldown_by_name=function(nodename)
     return cooldown.by_name[nodename]
@@ -58,15 +58,15 @@ get_max_cooldown=function(nodename)
             table.insert(cooldowns, groupvalue*group_cooldown)
         end
     end
-    if table_ext.is_empty(cooldowns) then
+    if modlib.table.is_empty(cooldowns) then
         return cooldown.default
     end
-    return table_ext.max(cooldowns)
+    return modlib.table.max(cooldowns)
 end
 
 register_on_placenode=function(callback)
     if type(callback) ~= "function" then
-        log.write("place_limit", "Warning : register_on_placenode called with a non-function. Ignoring.")
+        modlib.log.write("place_limit", "Warning : register_on_placenode called with a non-function. Ignoring.")
         return
     end
     table.insert(event_handlers, callback)
@@ -78,18 +78,18 @@ unregister_on_placenode=function(index)
         event_handlers[index]=nil
         return true
     end
-    log.write("place_limit", "Warning : unregister_on_placenode called with an invalid index. Ignoring.")
+    modlib.log.write("place_limit", "Warning : unregister_on_placenode called with an invalid index. Ignoring.")
     return false
 end
 
 minetest.register_on_placenode(function(pos, newnode, placer, oldnode, itemstack, pointed_thing)
-    if ((minetest.get_us_time()-player_ext.get_property(placer:get_player_name(), "last_placed"))/1000000) < player_ext.get_property(placer:get_player_name(), "required_cooldown") then
+    if ((minetest.get_us_time()-modlib.player.get_property(placer:get_player_name(), "last_placed"))/1000000) < modlib.player.get_property(placer:get_player_name(), "required_cooldown") then
         minetest.swap_node(pos, oldnode)
         return true
     end
-    player_ext.set_property(placer:get_player_name(), "last_placed", minetest.get_us_time())
+    modlib.player.set_property(placer:get_player_name(), "last_placed", minetest.get_us_time())
     local required_cooldown_for_player=get_max_cooldown(newnode.name)
-    player_ext.set_property(placer:get_player_name(), "required_cooldown",required_cooldown_for_player)
+    modlib.player.set_property(placer:get_player_name(), "required_cooldown",required_cooldown_for_player)
     hud_timers.add_timer(placer:get_player_name(), {name="Place Limit", duration=required_cooldown_for_player})
     for _, handler in pairs(event_handlers) do
         handler(pos, newnode, placer, oldnode, itemstack, pointed_thing)
