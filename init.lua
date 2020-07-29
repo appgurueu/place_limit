@@ -1,1 +1,1 @@
-modlib.mod.init("place_limit")
+modlib.mod.init()
