@@ -1,13 +1,11 @@
 -- TODO incorporate quota from https://github.com/MT-CTF/capturetheflag/pull/803
--- TODO get rid of deprecated modlib.conf & modlib.log usage
+-- TODO get rid of deprecated modlib.conf usage
 
 event_handlers={}
 
 local playerdata = modlib.minetest.playerdata(function(player)
 	return {last_placed = modlib.minetest.get_gametime(), required_cooldown = 0}
 end)
-
-modlib.log.create_channel("place_limit")
 
 local config = modlib.conf.import("place_limit", {
     type="table",
