@@ -1,9 +1,11 @@
+-- TODO incorporate quota from https://github.com/MT-CTF/capturetheflag/pull/803
+-- TODO get rid of deprecated modlib.conf & modlib.log usage
+
 event_handlers={}
 
-modlib.player.add_playerdata_function(function(playerdata)
-    playerdata.last_placed = modlib.minetest.get_gametime()
+local playerdata = modlib.minetest.playerdata(function(player)
+	return {last_placed = modlib.minetest.get_gametime(), required_cooldown = 0}
 end)
-modlib.player.set_property_default("required_cooldown", 0)
 
 modlib.log.create_channel("place_limit")
 
@@ -71,13 +73,14 @@ end
 
 minetest.register_on_placenode(function(pos, newnode, placer, oldnode, itemstack, pointed_thing)
     local name = placer:get_player_name()
-    if modlib.minetest.get_gametime() - modlib.player.get_property(name, "last_placed") < modlib.player.get_property(name, "required_cooldown") then
+    local data = playerdata[name]
+    if modlib.minetest.get_gametime() - data.last_placed < data.required_cooldown then
         minetest.swap_node(pos, oldnode)
         return true
     end
-    modlib.player.set_property(name, "last_placed", modlib.minetest.get_gametime())
+    data.last_placed = modlib.minetest.get_gametime()
     local required_cooldown_for_player=get_max_cooldown(newnode.name)
-    modlib.player.set_property(name, "required_cooldown",required_cooldown_for_player)
+    data.required_cooldown = required_cooldown_for_player
     hud_timers.add_timer(name, {name="Place Limit", duration=required_cooldown_for_player})
     for _, handler in pairs(event_handlers) do
         handler(pos, newnode, placer, oldnode, itemstack, pointed_thing)
