@@ -1,3 +1,8 @@
+[place_limit.cooldown]
 
+# Default cooldown value - only used if no `by_group` or `by_node` cooldown specified for given node.
+place_limit.cooldown.default (Place limit Cooldown Default) float 3 0.000000 1073741824.000000
 
-place_limit.cooldown.default (Place limit cooldown default) float 3 0.000000 1073741824.000000
+[*place_limit.cooldown.by_group]
+
+[*place_limit.cooldown.by_name]

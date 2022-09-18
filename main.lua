@@ -1,36 +1,12 @@
 -- TODO incorporate quota from https://github.com/MT-CTF/capturetheflag/pull/803
--- TODO get rid of deprecated modlib.conf usage
 
 event_handlers={}
 
-local playerdata = modlib.minetest.playerdata(function(player)
+local playerdata = modlib.minetest.playerdata(function()
 	return {last_placed = modlib.minetest.get_gametime(), required_cooldown = 0}
 end)
 
-local config = modlib.conf.import("place_limit", {
-    type="table",
-    children={
-        cooldown={
-            type="table",
-            children={
-                default={
-                    type="number",
-                    range={0}
-                },
-                by_name= {
-                    type = "table",
-                    keys = { type = "string" },
-                    values = { type = "number", range = { 0 } }
-                },
-                by_group= {
-                    type = "table",
-                    keys = { type = "string" },
-                    values = { type = "number", range = { 0 } }
-                }
-            }
-        }
-    }
-})
+local config = modlib.mod.configuration()
 
 modlib.table.add_all(getfenv(1), config)
 

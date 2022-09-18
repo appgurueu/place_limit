@@ -17,29 +17,25 @@ Licensed under the MIT License. Written by Lars Mueller alias LMD or appguru(eu)
 
 ## Configuration
 
-### Default Configuration
+<!--modlib:conf:2-->
+### `cooldown`
 
-```json
-{
-  "cooldown": {
-    "default": 3.0,
-    "by_name": {},
-    "by_group": {}
-  }
-}
-```
+#### `by_group`
 
-### Usage
-
-#### `cooldown`
-
-##### `default`
-Default cooldown value - only used if no `by_group` or `by_node` cooldown specified for given node.
-
-##### `by_name`
-Cooldown by node name.
-
-##### `by_group`
 Cooldown by node group. Will be multiplied with node group value.
 
-*In the end, maximum cooldown value of all `by_group` and the `by_name` cooldown is used*
+#### `by_name`
+
+Cooldown by node name.
+
+#### `default`
+
+Default cooldown value - only used if no `by_group` or `by_node` cooldown specified for given node.
+
+* Type: number
+* Default: `3`
+* &gt;= `0`
+
+<!--modlib:conf-->
+
+In the end, the maximum cooldown value of all `by_group` cooldowns and the `by_name` cooldown is used.
