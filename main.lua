@@ -31,7 +31,7 @@ function get_max_cooldown(nodename)
     if modlib.table.is_empty(cooldowns) then
         return cooldown.default
     end
-    return modlib.table.max(cooldowns)
+    return math.max(unpack(cooldowns))
 end
 
 function register_on_placenode(callback)
